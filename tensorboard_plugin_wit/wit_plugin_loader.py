@@ -14,74 +14,92 @@
 # ==============================================================================
 """Wrapper around plugin to conditionally enable it."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+# from __future__ import absolute_import
+# from __future__ import division
+# from __future__ import print_function
 
-import argparse
+# import argparse
 
-import pkg_resources
-import tensorboard
+# import pkg_resources
+# import tensorboard
 from tensorboard.plugins import base_plugin
 
 
-# This dynamic plugin only works with TB versions 2.2.0 and later.
-# Before that version, WIT was already included in TB as a static plugin.
-_MIN_TENSORBOARD_VERSION = pkg_resources.parse_version("2.2.0")
+class WhatIfToolPluginLoader(base_plugin.TBPlugin):
+    """Redirect notice pointing users to the new dynamic profile plugin."""
+
+    plugin_name = "whatif"
+
+    def get_plugin_apps(self):
+        return {}
+
+    def is_active(self):
+        return False
+
+    def frontend_metadata(self):
+        return base_plugin.FrontendMetadata(
+            element_name="index.js",
+            tab_name="What-If Tool",
+        )
 
 
-class WhatIfToolPluginLoader(base_plugin.TBLoader):
-    """WhatIfToolPlugin factory.
-    This class checks for `tensorflow` install and dependency.
-    """
-
-    def load(self, context):
-        """Returns the plugin, if possible.
-        Args:
-          context: The TBContext flags.
-        Returns:
-          A WhatIfToolPlugin instance or None if it couldn't be loaded.
-        """
-        try:
-            # pylint: disable=unused-import
-            import tensorflow
-        except ImportError:
-            return
-
-        # If TB version is before 2.2.0, then do not load the WIT plugin
-        # as it is already included directly in TensorBoard.
-        version = pkg_resources.parse_version(tensorboard.__version__)
-        if version < _MIN_TENSORBOARD_VERSION:
-            return None
-
-        from tensorboard_plugin_wit.wit_plugin import WhatIfToolPlugin
-
-        return WhatIfToolPlugin(context)
-
-    def define_flags(self, parser):
-        group = parser.add_argument_group('what-if-tool')
-        try:
-          group.add_argument(
-              '--whatif-use-unsafe-custom-prediction',
-              dest='custom_predict_fn',
-              metavar='YOUR_CUSTOM_PREDICT_FUNCTION.py',
-              type=str,
-              default='',
-              help="The file location of your custom prediction function. Note \
-              that the flag executes arbitrary code, so make sure you passed the \
-              correct file location. See how to define the function in \
-              https://github.com/PAIR-code/what-if-tool/blob/master/README.md"
-              )
-          group.add_argument(
-            '--whatif-data-dir',
-            dest='wit_data_dir',
-            metavar='PATH',
-            type=str,
-            default='',
-            help='An optional additional directory under which the What-If '
-            'Tool can load example data from, outside of the TensorBoard '
-            'logdir.'
-            )
-        except argparse.ArgumentError:
-          # Argument already defined elsewhere. Nothing to do.
-          pass
+## This dynamic plugin only works with TB versions 2.2.0 and later.
+## Before that version, WIT was already included in TB as a static plugin.
+# _MIN_TENSORBOARD_VERSION = pkg_resources.parse_version("2.2.0")
+#
+#
+# class WhatIfToolPluginLoader(base_plugin.TBLoader):
+#    """WhatIfToolPlugin factory.
+#    This class checks for `tensorflow` install and dependency.
+#    """
+#
+#    def load(self, context):
+#        """Returns the plugin, if possible.
+#        Args:
+#          context: The TBContext flags.
+#        Returns:
+#          A WhatIfToolPlugin instance or None if it couldn't be loaded.
+#        """
+#        try:
+#            # pylint: disable=unused-import
+#            import tensorflow
+#        except ImportError:
+#            return
+#
+#        # If TB version is before 2.2.0, then do not load the WIT plugin
+#        # as it is already included directly in TensorBoard.
+#        version = pkg_resources.parse_version(tensorboard.__version__)
+#        if version < _MIN_TENSORBOARD_VERSION:
+#            return None
+#
+#        from tensorboard_plugin_wit.wit_plugin import WhatIfToolPlugin
+#
+#        return WhatIfToolPlugin(context)
+#
+#    def define_flags(self, parser):
+#        group = parser.add_argument_group("what-if-tool")
+#        try:
+#            group.add_argument(
+#                "--whatif-use-unsafe-custom-prediction",
+#                dest="custom_predict_fn",
+#                metavar="YOUR_CUSTOM_PREDICT_FUNCTION.py",
+#                type=str,
+#                default="",
+#                help="The file location of your custom prediction function. Note \
+#              that the flag executes arbitrary code, so make sure you passed the \
+#              correct file location. See how to define the function in \
+#              https://github.com/PAIR-code/what-if-tool/blob/master/README.md",
+#            )
+#            group.add_argument(
+#                "--whatif-data-dir",
+#                dest="wit_data_dir",
+#                metavar="PATH",
+#                type=str,
+#                default="",
+#                help="An optional additional directory under which the What-If "
+#                "Tool can load example data from, outside of the TensorBoard "
+#                "logdir.",
+#            )
+#        except argparse.ArgumentError:
+#            # Argument already defined elsewhere. Nothing to do.
+#            pass

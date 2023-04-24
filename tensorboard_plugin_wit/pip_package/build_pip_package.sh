@@ -41,7 +41,7 @@ pushd release
 rm -rf tensorboard_plugin_wit
 # Copy over all necessary files from tensorboard_plugin_wit
 cp -LR "$plugin_runfile_dir/tensorboard_plugin_wit" .
-cp -LR "$plugin_runfile_dir/utils" .
+#cp -LR "$plugin_runfile_dir/utils" .
 
 # Move files related to pip building to pwd.
 mv -f "tensorboard_plugin_wit/pip_package/README.md" .
@@ -51,29 +51,29 @@ mv -f "tensorboard_plugin_wit/pip_package/setup.py" .
 mkdir -p tensorboard_plugin_wit/static
 mv -f "tensorboard_plugin_wit/pip_package/index.js" tensorboard_plugin_wit/static
 rm -rf tensorboard_plugin_wit/pip_package
-cp "$plugin_runfile_dir/wit_dashboard/wit_tb_bin.html" "$plugin_runfile_dir/wit_dashboard/wit_tb_bin.js" tensorboard_plugin_wit/static
+#cp "$plugin_runfile_dir/wit_dashboard/wit_tb_bin.html" "$plugin_runfile_dir/wit_dashboard/wit_tb_bin.js" tensorboard_plugin_wit/static
 
 find . -name __init__.py | xargs chmod -x  # which goes for all genfiles
 
 # Copy interactive inference common utils over and ship it as part of the pip package.
 mkdir -p tensorboard_plugin_wit/_utils
-cp "$plugin_runfile_dir/utils/common_utils.py" tensorboard_plugin_wit/_utils
-cp "$plugin_runfile_dir/utils/inference_utils.py" tensorboard_plugin_wit/_utils
-cp "$plugin_runfile_dir/utils/platform_utils.py" tensorboard_plugin_wit/_utils
+#cp "$plugin_runfile_dir/utils/common_utils.py" tensorboard_plugin_wit/_utils
+#cp "$plugin_runfile_dir/utils/inference_utils.py" tensorboard_plugin_wit/_utils
+#cp "$plugin_runfile_dir/utils/platform_utils.py" tensorboard_plugin_wit/_utils
 touch tensorboard_plugin_wit/_utils/__init__.py
 
-mkdir -p tensorboard_plugin_wit/_vendor
->tensorboard_plugin_wit/_vendor/__init__.py
+#mkdir -p tensorboard_plugin_wit/_vendor
+#>tensorboard_plugin_wit/_vendor/__init__.py
 # Vendor tensorflow-serving-api because it depends directly on TensorFlow.
 # TODO(jameswex): de-vendor if they're able to relax that dependency.
-cp -LR "${RUNFILES}/org_tensorflow_serving_api/tensorflow_serving" tensorboard_plugin_wit/_vendor
+#cp -LR "${RUNFILES}/org_tensorflow_serving_api/tensorflow_serving" tensorboard_plugin_wit/_vendor
 
 # Fix the import statements to reflect the copied over path.
-find tensorboard_plugin_wit -name \*.py |
-  xargs $sedi -e '
-    s/^from utils/from tensorboard_plugin_wit._utils/
-    s/from tensorflow_serving/from tensorboard_plugin_wit._vendor.tensorflow_serving/
-  '
+#find tensorboard_plugin_wit -name \*.py |
+#  xargs $sedi -e '
+#    s/^from utils/from tensorboard_plugin_wit._utils/
+#    s/from tensorflow_serving/from tensorboard_plugin_wit._vendor.tensorflow_serving/
+#  '
 
 virtualenv venv
 export VIRTUAL_ENV=venv

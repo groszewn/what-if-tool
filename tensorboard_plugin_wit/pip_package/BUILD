@@ -17,7 +17,7 @@ sh_binary(
         "README.md",
         "setup.py",
         ":assets", # For HTML payload
-        "//utils:inference_utils",  # Utility method that visualization code uses.
+        #"//utils:inference_utils",  # Utility method that visualization code uses.
         "//tensorboard_plugin_wit:wit_plugin_loader",  # WIT TensorBoard plugin code
     ],
     tags = [
